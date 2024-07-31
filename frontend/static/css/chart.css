@@ -1,0 +1,170 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background: linear-gradient(135deg, #21368d, #308edc);
+}
+#title {
+    text-align: center;
+    font-size: 36px;
+    margin-top: 20px;
+}
+#chartsContainer {
+display: flex;
+justify-content: space-between;
+margin: 20px auto;
+width: 100%;
+}
+
+.chart-wrapper {
+    flex: 1;
+    margin: 0 10px; /* Space between charts */
+}
+.chart-wrapper1 {
+    flex: 1;
+    margin: 0 10px; /* Space between charts */
+}
+
+#companyChart {
+    flex: 0 0 70%; /* 70% width for the company chart */
+}
+
+#recommendationChart {
+    flex: 0 0 30%; /* 30% width for the recommendation chart */
+}
+
+canvas {
+    width: 100% !important;
+    height: 400px !important; /* Fixed height for consistency */
+}
+#controls, #buySection, #interestCalculator {
+    text-align: center;
+    margin-bottom: 20px;
+}
+#buySection, #interestCalculator, .chart-wrapper1 {
+    display: flex;
+    height: 300px;
+    flex-direction: column;
+    align-items: center;
+    border: 2px solid #007bff;
+    border-radius: 10px;
+    padding: 10px;
+    color: white;
+    background-color: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    margin: 10px;
+}
+#buySection {
+    flex: 1;
+}
+#interestCalculator {
+    flex: 1;
+}
+.sectionsContainer {
+    display: flex;
+    justify-content: space-between;
+    width: 95%;
+    margin: 20px auto;
+}
+input, select {
+    margin: 5px;
+}
+#fetchButtonContainer {
+    position: fixed; /* Fixed to align with the button */
+    top: 20px;
+    right: 20px;
+    display: inline-block;
+}
+
+#fetchButton {
+    width: 70px;
+    height: 70px;
+    background: url('https://uxmag.com/wp-content/uploads/2024/04/bigog.png') no-repeat center center;
+    background-size: cover;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    outline: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+}
+
+#fetchButton:hover {
+    opacity: 0.8;
+}
+
+#tooltip {
+    visibility: hidden;
+    width: 150px;
+    background-color: #007bff;
+    color: #fff;
+    text-align: center;
+    border-radius: 5px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    top: 50%;
+    right: 100%; /* Position to the left of the button */
+    transform: translateY(-50%) translateX(-10px); /* Adjust for vertical center and space from button */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    font-size: 12px;
+    white-space: nowrap; /* Prevent text wrapping */
+}
+
+#fetchButtonContainer:hover #tooltip {
+    visibility: visible;
+}
+
+#mainHeading {
+    font-size: 2.0em; /* Increase font size for the heading */
+}
+
+/* Specific styles for the subheading */
+#subHeading {
+    font-size: 1.5em; /* Increase font size for the subheading */
+    margin-top: 20px; /* Space above the subheading */
+}
+
+
+.date-container {
+    position: relative; /* Establishes a relative positioning context */
+    margin-bottom: 50px; /* Add space below to ensure date picker opens upwards */
+}
+
+/* Optional: Adjust the input if needed */
+#selectedDate {
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #cccccc;
+    color: #000000; /* Text color for input */
+    box-sizing: border-box; /* Ensure padding and border are included in the element's total width and height */
+}
+
+/* Style for the predict button */
+#predict_button {
+    padding: 10px 20px;
+    background-color: #007bff; /* Button background color */
+    border: none;
+    border-radius: 5px;
+    color: #ffffff; /* Button text color */
+    cursor: pointer;
+    font-size: 16px;
+}
+
+/* Change button background color on hover */
+#predict_button:hover {
+    background-color: #0056b3; /* Darker background color on hover */
+}
+
+/* Style for the prediction result */
+#result {
+    font-size: 1.2em; /* Slightly larger font size for the result */
+    margin-top: 20px;
+    display: none; /* Initially hide the result */
+    margin-bottom: 50px;
+}
+
+#pred{
+    color: white;
+    text-align: center;
+}
+

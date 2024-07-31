@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Purchases</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/preferences.css') }}">
+    <style>
+        .purchases-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            color: #fff;
+        }
+
+        table {
+            width: 80%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.5);
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: #002d6d;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        tr:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+        }
+
+        .info-box {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            width: 80%;
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.5);
+            display: none;
+        }
+
+        .info-box p {
+            margin: 10px 0;
+        }
+
+        .profit {
+            color: green;
+        }
+
+        .loss {
+            color: red;
+        }
+
+        .total-profit-container {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            width: 80%;
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    {% include 'menu.html' %}
+    <div class="purchases-container">
+        <h1 id="pu">Your Purchases</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Company</th>
+                    <th>Share Name</th>
+                    <th>Quantity</th>
+                    <th>Price per Share</th>
+                    <th>Total Cost</th>
+                    <th>Date</th>
+                    <th>Current Price</th>
+                    <th>Profit/Loss</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if purchases %}
+                    {% for purchase in purchases %}
+                        <tr class="purchase-row" data-company="{{ purchase.company }}"
+                            data-share="{{ purchase.share }}"
+                            data-quantity="{{ purchase.quantity }}"
+                            data-price="{{ purchase.price }}"
+                            data-total-cost="{{ purchase.total_cost }}"
+                            data-date="{{ purchase.timestamp }}">
+                            <td>{{ purchase.company }}</td>
+                            <td>{{ purchase.share }}</td>
+                            <td>{{ purchase.quantity }}</td>
+                            <td>${{ purchase.price }}</td>
+                            <td>${{ purchase.total_cost }}</td>
+                            <td>{{ purchase.timestamp }}</td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="8">You have not made any purchases yet.</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+        <div class="total-profit-container" id="total-profit-container">
+            <strong>Total Profit/Loss:</strong> <span id="total-profit-amount">$0.00</span>
+        </div>
+        <div class="info-box" id="info-box">
+            <h3>Purchase Details</h3>
+            <p><strong>Company:</strong> <span id="info-company"></span></p>
+            <p><strong>Share Name:</strong> <span id="info-share"></span></p>
+            <p><strong>Quantity:</strong> <span id="info-quantity"></span></p>
+            <p><strong>Price per Share:</strong> $<span id="info-price"></span></p>
+            <p><strong>Total Cost:</strong> $<span id="info-total-cost"></span></p>
+            <p><strong>Date:</strong> <span id="info-date"></span></p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const rows = document.querySelectorAll('.purchase-row');
+            let totalProfit = 0;
+
+            rows.forEach(row => {
+                const shareName = row.getAttribute('data-share');
+                const quantity = parseFloat(row.getAttribute('data-quantity'));
+                const purchasePrice = parseFloat(row.getAttribute('data-price'));
+                const priceCell = document.createElement('td');
+                const profitCell = document.createElement('td');
+
+                row.appendChild(priceCell);
+                row.appendChild(profitCell);
+
+                fetchCurrentPrice(shareName, priceCell, profitCell, quantity, purchasePrice);
+            });
+
+            async function fetchCurrentPrice(shareName, priceCell, profitCell, quantity, purchasePrice) {
+                try {
+                    const response = await fetch(`/current-price?company=${encodeURIComponent(shareName)}`);
+                    const data = await response.json();
+                    const currentPrice = parseFloat(data.price);
+                    priceCell.innerText = `$${currentPrice.toFixed(2)}`;
+                    const profit = (currentPrice - purchasePrice) * quantity;
+                    profitCell.innerText = `$${profit.toFixed(2)}`;
+                    totalProfit += profit;
+
+                    // Set the text color based on profit or loss
+                    if (profit > 0) {
+                        profitCell.classList.add('profit');
+                    } else if (profit < 0) {
+                        profitCell.classList.add('loss');
+                    }
+
+                    document.getElementById('total-profit-amount').innerText = `$${totalProfit.toFixed(2)}`;
+                    const totalProfitContainer = document.getElementById('total-profit-amount');
+                    totalProfitContainer.style.color = totalProfit > 0 ? 'green' : 'red';
+
+                } catch (error) {
+                    console.error('Error fetching current price:', error);
+                    priceCell.innerText = 'Error fetching price';
+                    profitCell.innerText = 'N/A';
+                }
+            }
+        });
+    </script>
+</body>
+</html>

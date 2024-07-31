@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Chart Comparison</title>
+    <link rel="stylesheet" href="../static/css/compare_shares.css">
+    <!-- Moment.js -->
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/min/moment.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <!-- Chart.js Date Adapter -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@^1"></script>
+    <script>
+        const data1 = {{ data1|tojson }};
+        const data2 = {{ data2|tojson }};
+    </script>
+    <script src="/static/js/compare_shares.js"></script>
+</head>
+<body>
+    {% include 'menu.html' %}
+    <h1 id="title">Company Chart Comparison</h1>
+    <div id="controls">
+        <label for="dataType">Select Data Type:</label>
+        <select id="dataType">
+            <option value="Close">Close Value</option>
+            <option value="Open">Open Value</option>
+            <option value="High">High Value</option>
+            <option value="Low">Low Value</option>
+        </select>
+        <label for="timeRange">Select Time Range:</label>
+        <select id="timeRange">
+            <option value="5y">Past 5 Years</option>
+            <option value="1y">Past Year</option>
+            <option value="1m">Past Month</option>
+            <option value="5d">Past 5 Days</option>
+        </select>
+    </div>
+    <div id="chartContainer">
+        <div class="chartWrapper">
+            <div class="chartTitle" id="chartTitle1">{{ company1 }}</div>
+            <canvas id="companyChart1"></canvas>
+        </div>
+        <div class="chartWrapper">
+            <div class="chartTitle" id="chartTitle2">{{ company2 }}</div>
+            <canvas id="companyChart2"></canvas>
+        </div>
+    </div>
+</body>
+</html>
