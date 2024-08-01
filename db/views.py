@@ -4,7 +4,7 @@ import pandas as pd
 from models import check_password_hash
 from pymongo import MongoClient
 # from dotenv import load_dotenv
-from flask_login import login_user, logout_user, login_required
+from flask_login import current_user, login_user, logout_user, login_required
 from flask import request, session, jsonify, Flask
 from models import User
 
@@ -192,5 +192,12 @@ def register():
     add_user(new_user)
     users_collection.update_one({"_id": new_user._id}, {"$set": {"services": new_user.services}})
     return jsonify({'status': 'success', 'message': 'User registered successfully'}), 201
+
+
+def is_logged_in():
+    if current_user.is_authenticated:
+        return jsonify({'is_logged_in': True})
+    else:
+        return jsonify({'is_logged_in': False})
 
 

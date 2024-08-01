@@ -29,6 +29,6 @@ spec:
     spec:
       containers:
       - name: backend
-        image: rapkeb/stock_backend:6.0
+        image: rapkeb/stock_backend:6.3
         ports:
         - containerPort: 5005

@@ -30,6 +30,6 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: rapkeb/stock_frontend:9.5
+          image: rapkeb/stock_frontend:9.6
           ports:
             - containerPort: 80

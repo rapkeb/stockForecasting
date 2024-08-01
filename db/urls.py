@@ -1,4 +1,4 @@
-from views import login, logout, register, get_user_purchases, preferences, buy_share
+from views import login, logout, register, get_user_purchases, preferences, buy_share, is_logged_in
 
 
 def configure_routes(app):
@@ -8,6 +8,7 @@ def configure_routes(app):
     app.add_url_rule('/buy-share', 'buy-share', buy_share, methods=["POST"])
     app.add_url_rule('/preferences', 'preferences', preferences, methods=["GET", "POST"])
     app.add_url_rule('/purchases', 'purchases', get_user_purchases)
+    app.add_url_rule('/auth', 'auth', is_logged_in)
 
 
 
