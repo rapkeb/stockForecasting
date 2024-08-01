@@ -12,9 +12,9 @@ from flask_login import login_required
 
 _df = pd.read_csv('companylist.csv')
 df = _df.copy()
+df = df.fillna('N/A')
 
 
-@login_required
 def company_chart():
     share = request.args.get('share')
     actual_date = dt.date.today()
@@ -37,14 +37,12 @@ def company_chart():
     return jsonify(formatted_data)
 
 
-@login_required
 def index():
     unique_companies = df[['Company', 'Sector', 'Share', 'Industry']].drop_duplicates().sort_values(by='Company')
     unique_companies_list = unique_companies.to_dict(orient='records')
-    return jsonify(unique_companies_list)
+    return jsonify(unique_companies_list), 200
 
 
-@login_required
 def compare_shares():
     company1_name = request.args.get('company1')
     company2_name = request.args.get('company2')
@@ -81,47 +79,13 @@ def compare_shares():
         'company2': company2_name,
         'data2': data2
     })
-
-
-@login_required
-def buy_share():
-    data = request.json
-    company = data.get('company')
-    share = data.get('share')
-    quantity = data.get('quantity')
-    price = data.get('price')
-
-    if not all([company, share, quantity, price]):
-        return jsonify({'status': 'error', 'message': 'Missing data fields'}), 400
-
-    # buy_share1(company, share, quantity, price)
-    return jsonify({'status': 'success', 'message': 'Purchase saved successfully'}), 200
-    
-@login_required
-def recommendation():
-    # Retrieve company parameter from request
-    company = request.args.get('company')
-    # Retrieve Finnhub API key from environment variables
-    api_key = os.getenv('FINNHUB_API_KEY')
-    # Construct the URL with the company symbol and API key
-    url = f'https://finnhub.io/api/v1/stock/recommendation?symbol={company}&token={api_key}'
-    # Make the request to the Finnhub API
-    response = requests.get(url)
-    # Check if the request was successful
-    if response.status_code == 200:
-        # Return the JSON response
-        return jsonify(response.json())
-    else:
-        # Return an error message if the request failed
-        return jsonify({'error': 'Failed to fetch recommendations'}), response.status_code
     
 
-@login_required
 def current_price():
     company = request.args.get('company')
     price = get_current_price(company)
     if price is not None:
-        return jsonify({'price': price})
+        return jsonify({'price': price}), 200
     else:
         return jsonify({'error': 'Unable to fetch price'}), 500
 
@@ -141,44 +105,6 @@ def get_current_price(symbol):
         return None
 
 
-@login_required
-def preferences():
-    if request.method == 'POST':
-        data = request.json
-        selected_sectors = data.get('sectors')
-        risk_tolerance = data.get('risk_tolerance')
-        investment_horizon = data.get('investment_horizon')
-        username = data.get('username')
-
-        if not username or not selected_sectors or not risk_tolerance or not investment_horizon:
-            return jsonify({'error': 'Missing data fields'}), 400
-
-        # update_preferences(username, selected_sectors, risk_tolerance, investment_horizon)
-        return jsonify({'status': 'success', 'message': 'Preferences updated successfully'}), 200
-
-    elif request.method == 'GET':
-        username = request.args.get('username')
-        if not username:
-            return jsonify({'error': 'Username is required'}), 400
-
-        # user = find_user_by_username(username)
-        # preferences = user.get('preferences', {})
-        sectors = df['Sector'].unique().tolist()
-        return jsonify({'preferences': [], 'sectors': sectors}), 200
-
-
-def purchases():
-    username = request.args.get('username')
-    if not username:
-        return jsonify({'error': 'Username is required'}), 400
-
-    # purchases = get_user_purchases(username)
-    # purchase_list = list(purchases)
-    purchase_list = []
-    return jsonify(purchase_list), 200
-
-
-@login_required
 def recommendation():
     company = request.args.get('company')
     api_key = os.getenv('FINNHUB_API_KEY')
@@ -189,7 +115,6 @@ def recommendation():
     else:
         return jsonify({'error': 'Failed to fetch recommendations'}), response.status_code
 
-@login_required
 def predict():
     date = request.args.get('date')
     share = request.args.get('share')

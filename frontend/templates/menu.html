@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hamburger Menu</title>
-    <link rel="stylesheet" href="/static/css/menu.css">
+    <link rel="stylesheet" href="static/css/menu.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@100..900&family=Ga+Maamli&family=Poiret+One&display=swap" rel="stylesheet">
@@ -18,13 +18,13 @@
         </div>
         <nav class="sidebar">
             <ul>
-                <li><a href="{{ url_for('index') }}">Home</a></li>
-                <li><a href="{{ url_for('preferences') }}">My preferences</a></li>
-                <li><a href="{{ url_for('purchases') }}">View Purchases</a></li>
-                <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                <li><a href="/front/homepage">Home</a></li>
+                <li><a href="/front/preferences">My preferences</a></li>
+                <li><a href="/front/purchases">View Purchases</a></li>
+                <li><a href="#" id="logoutLink">Logout</a></li>
             </ul>
         </nav>
     </div>
-    <script src="/static/js/menu.js"></script>
+    <script src="static/js/menu.js"></script>
 </body>
 </html>

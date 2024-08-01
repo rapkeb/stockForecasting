@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Companies and Sectors</title>
-    <link rel="stylesheet" href="../static/css/index.css">
+    <link rel="stylesheet" href="static/css/index.css">
 </head>
 <body>
     <!-- Include Hamburger Menu -->
@@ -17,16 +17,9 @@
     </div>
     <input type="text" id="search-input" placeholder="Search companies..." onkeyup="filterCompanies()">
     <div class="container" id="companies-container">
-        {% for company in companies %}
-        <div class="company-div" data-company="{{ company.Company }}" data-sector="{{ company.Sector }}" onclick="showChart('{{ company.Company }}', '{{ company.Share }}')" onmousedown="startSelectCompany(event, '{{ company.Company }}')" onmouseup="stopSelectCompany(event)">
-            <p class="company">{{ company.Company }}</p>
-            <p class="share">{{ company.Share }}</p>
-            <p class="sector">Sector: {{ company.Sector }}</p>
-            <p class="industry">Industry: {{ company.Industry }}</p>
-        </div>
-        {% endfor %}
+        <!-- Company elements will be dynamically inserted here -->
     </div>
     <button id="compare-button" onclick="compareCompanies()">Compare Shares</button>
-    <script src="/static/js/index.js"></script>
+    <script src="static/js/index.js"></script>
 </body>
 </html>

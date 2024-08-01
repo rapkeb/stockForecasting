@@ -3,6 +3,7 @@ warnings.filterwarnings('ignore')
 
 from flask import Flask
 from flask_login import LoginManager
+from dotenv import load_dotenv
 from urls import configure_routes
 from bson import ObjectId
 # from mongo.db import users_collection,user_from_dict
@@ -13,10 +14,11 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
  
 configure_routes(app)
-login_manager = LoginManager()
-login_manager.init_app(app)
-login_manager.login_view = 'login'  # Redirect to the login view if not authenticated
-login_manager.login_message = "צריכים להיות מחוברים כדי לגשת לדף זה"
+load_dotenv()
+# login_manager = LoginManager()
+# login_manager.init_app(app)
+# login_manager.login_view = 'login'  # Redirect to the login view if not authenticated
+# login_manager.login_message = "צריכים להיות מחוברים כדי לגשת לדף זה"
 
 # @login_manager.user_loader
 # def load_user(user_id):

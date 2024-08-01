@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <link rel="stylesheet" href="../static/css/styles.css">
+    <link rel="stylesheet" href="static/css/styles.css">
 </head>
 <body>
     <div class="background">
@@ -13,7 +13,7 @@
     <div class="login-container signup-container">
         <div class="login-box signup-box">
             <h2>Login</h2>
-            <form method="POST" action="/login">
+            <form id="login-form">
                 <div class="input-box">
                     <input type="text" name="username" required>
                     <label>Username</label>
@@ -23,11 +23,11 @@
                     <label>Password</label>
                 </div>
                 <button type="submit">Login</button>
-                <p class="signup-link">Don't have an account? <a href="/register">Sign up</a></p>
+                <p class="signup-link">Don't have an account? <a href="/front/register">Sign up</a></p>
             </form>
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="../static/js/welcome.js"></script>
+    <script src="static/js/welcome.js"></script>
 </body>
 </html>

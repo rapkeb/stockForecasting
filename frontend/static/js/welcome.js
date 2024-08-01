@@ -36,3 +36,73 @@ function updateChart() {
 }
 
 setInterval(updateChart, 1000);
+
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('login-form');
+
+    form.addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        const username = form.querySelector('input[name="username"]').value;
+        const password = form.querySelector('input[name="password"]').value;
+
+        fetch('/db/login', { // Adjust URL to your backend service
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username: username, password: password }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                // Store user data in session storage or handle successful login
+                sessionStorage.setItem('username', username);
+                sessionStorage.setItem('user_id', data.user_id);
+                window.location.href = `/front/homepage`;
+            } else {
+                // Show error message
+                alert(data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred during login. Please try again.');
+        });
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('register-form');
+
+    form.addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        const username = form.querySelector('input[name="username"]').value;
+        const password = form.querySelector('input[name="password"]').value;
+        const confirmPassword = form.querySelector('input[name="confirm_password"]').value;
+
+        fetch('/db/register', { // Adjust URL to your backend service
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username: username, password: password, confirm_password: confirmPassword }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                window.location.href = '/front/login'; // Redirect to login page
+            } else {
+                // Show error message
+                alert(data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred during registration. Please try again.');
+        });
+    });
+});
+
+

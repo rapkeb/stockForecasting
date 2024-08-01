@@ -1,5 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
-    let filtereddata = data;
+    let data;
+    fetch(`/back/company_chart?share=${symbol}`)
+                .then(response => response.json())
+                .then(data1 => {
+                    data = data1;
+                    let filtereddata = data;
     const ctx = document.getElementById('companyChart').getContext('2d');
 
     function filterDataByRange(data, range) {
@@ -213,10 +218,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Fetch current share price
     async function fetchCurrentPrice() {
-        const shareName = document.getElementById("share").innerText.trim();
-        const response = await fetch(`/current-price?company=${shareName}`);
-        const data = await response.json();
-        document.getElementById('currentPrice').innerText = `$${data.price.toFixed(2)}`;
+        try {
+            const shareName = document.getElementById("share").innerText.trim();
+            const response = await fetch(`/back/current-price?company=${shareName}`);
+            
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+    
+            const data = await response.json();
+            
+            if (data.price !== undefined) {
+                document.getElementById('currentPrice').innerText = `$${data.price.toFixed(2)}`;
+            } else {
+                document.getElementById('currentPrice').innerText = 'Price not available';
+            }
+        } catch (error) {
+            console.error('Error fetching current price:', error);
+            document.getElementById('currentPrice').innerText = 'Error fetching price';
+        }
     }
 
     fetchCurrentPrice();
@@ -224,7 +244,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('buyButton').addEventListener('click', async () => {
         const quantity = document.getElementById('shareQuantity').value;
         const currentPrice = parseFloat(document.getElementById('currentPrice').innerText.replace('$', ''));
-        const response = await fetch('/buy-share', {
+        const response = await fetch('/db/buy-share', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -260,7 +280,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const date = document.getElementById('selectedDate').value;
         const shareName = document.getElementById("share").innerText.trim();
         if (date) {
-            const response = await fetch(`/predict?date=${encodeURIComponent(date)}&share=${encodeURIComponent(shareName)}`);
+            const response = await fetch(`/back/predict?date=${encodeURIComponent(date)}&share=${encodeURIComponent(shareName)}`);
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
@@ -316,15 +336,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const ctx1 = document.getElementById('recommendationChart').getContext('2d');
     let recommendationChart;
 
-    async function fetchCurrentPrice() {
-        const shareName = document.getElementById("share").innerText.trim();
-        const response = await fetch(`/current-price?company=${shareName}`);
-        const data = await response.json();
-        document.getElementById('currentPrice').innerText = `$${data.price.toFixed(2)}`;
-    }
-
     const fetchRecommendations = async () => {
-        const url = `/recommendation?company=${symbol}`;
+        const url = `/back/recommendation?company=${symbol}`;
         try {
             const response = await fetch(url);
             const data = await response.json();
@@ -402,6 +415,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Error fetching recommendations:', error);
         }
     };
-
     document.getElementById('fetchButton').addEventListener('click', fetchRecommendations);
+                })
+                .catch(error => console.error('Error fetching chart data:', error));
 });

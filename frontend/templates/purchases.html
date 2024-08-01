@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Purchases</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/preferences.css') }}">
+    <link rel="stylesheet" href="static/css/preferences.css">
     <style>
         .purchases-container {
             display: flex;
@@ -94,28 +94,8 @@
                     <th>Profit/Loss</th>
                 </tr>
             </thead>
-            <tbody>
-                {% if purchases %}
-                    {% for purchase in purchases %}
-                        <tr class="purchase-row" data-company="{{ purchase.company }}"
-                            data-share="{{ purchase.share }}"
-                            data-quantity="{{ purchase.quantity }}"
-                            data-price="{{ purchase.price }}"
-                            data-total-cost="{{ purchase.total_cost }}"
-                            data-date="{{ purchase.timestamp }}">
-                            <td>{{ purchase.company }}</td>
-                            <td>{{ purchase.share }}</td>
-                            <td>{{ purchase.quantity }}</td>
-                            <td>${{ purchase.price }}</td>
-                            <td>${{ purchase.total_cost }}</td>
-                            <td>{{ purchase.timestamp }}</td>
-                        </tr>
-                    {% endfor %}
-                {% else %}
-                    <tr>
-                        <td colspan="8">You have not made any purchases yet.</td>
-                    </tr>
-                {% endif %}
+            <tbody id="purchase-table-body">
+                <!-- Rows will be inserted here by JavaScript -->
             </tbody>
         </table>
         <div class="total-profit-container" id="total-profit-container">
@@ -134,25 +114,65 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const rows = document.querySelectorAll('.purchase-row');
+    fetch('/db/purchases')
+        .then(response => response.json())
+        .then(purchases => {
+            const tbody = document.getElementById('purchase-table-body');
             let totalProfit = 0;
 
-            rows.forEach(row => {
-                const shareName = row.getAttribute('data-share');
-                const quantity = parseFloat(row.getAttribute('data-quantity'));
-                const purchasePrice = parseFloat(row.getAttribute('data-price'));
-                const priceCell = document.createElement('td');
-                const profitCell = document.createElement('td');
+            if (purchases.length === 0) {
+                const noPurchasesRow = document.createElement('tr');
+                const noPurchasesCell = document.createElement('td');
+                noPurchasesCell.colSpan = 8;
+                noPurchasesCell.innerText = 'You have not made any purchases yet.';
+                noPurchasesRow.appendChild(noPurchasesCell);
+                tbody.appendChild(noPurchasesRow);
+            } else {
+                purchases.forEach(purchase => {
+                    const row = document.createElement('tr');
+                    row.classList.add('purchase-row');
 
-                row.appendChild(priceCell);
-                row.appendChild(profitCell);
+                    const companyCell = document.createElement('td');
+                    companyCell.innerText = purchase.company;
+                    row.appendChild(companyCell);
 
-                fetchCurrentPrice(shareName, priceCell, profitCell, quantity, purchasePrice);
-            });
+                    const shareCell = document.createElement('td');
+                    shareCell.innerText = purchase.share;
+                    row.appendChild(shareCell);
+
+                    const quantityCell = document.createElement('td');
+                    quantityCell.innerText = purchase.quantity;
+                    row.appendChild(quantityCell);
+
+                    const priceCell = document.createElement('td');
+                    priceCell.innerText = `$${purchase.price.toFixed(2)}`;
+                    row.appendChild(priceCell);
+
+                    const totalCostCell = document.createElement('td');
+                    totalCostCell.innerText = `$${purchase.total_cost.toFixed(2)}`;
+                    row.appendChild(totalCostCell);
+
+                    const dateCell = document.createElement('td');
+                    dateCell.innerText = new Date(purchase.timestamp).toLocaleDateString();
+                    row.appendChild(dateCell);
+
+                    const currentPriceCell = document.createElement('td');
+                    row.appendChild(currentPriceCell);
+
+                    const profitCell = document.createElement('td');
+                    row.appendChild(profitCell);
+
+                    // Append the row to the table body
+                    tbody.appendChild(row);
+
+                    // Fetch the current price and calculate profit/loss
+                    fetchCurrentPrice(purchase.share, currentPriceCell, profitCell, purchase.quantity, purchase.price);
+                });
+            }
 
             async function fetchCurrentPrice(shareName, priceCell, profitCell, quantity, purchasePrice) {
                 try {
-                    const response = await fetch(`/current-price?company=${encodeURIComponent(shareName)}`);
+                    const response = await fetch(`/back/current-price?company=${encodeURIComponent(shareName)}`);
                     const data = await response.json();
                     const currentPrice = parseFloat(data.price);
                     priceCell.innerText = `$${currentPrice.toFixed(2)}`;
@@ -170,14 +190,15 @@
                     document.getElementById('total-profit-amount').innerText = `$${totalProfit.toFixed(2)}`;
                     const totalProfitContainer = document.getElementById('total-profit-amount');
                     totalProfitContainer.style.color = totalProfit > 0 ? 'green' : 'red';
-
                 } catch (error) {
                     console.error('Error fetching current price:', error);
                     priceCell.innerText = 'Error fetching price';
                     profitCell.innerText = 'N/A';
                 }
             }
-        });
+        })
+        .catch(error => console.error('Error fetching purchases:', error));
+});
     </script>
 </body>
 </html>

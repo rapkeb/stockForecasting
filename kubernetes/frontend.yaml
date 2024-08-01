@@ -29,8 +29,19 @@ spec:
         tier: frontend
     spec:
       containers:
-        - name: frontend
-          image: rapkeb/stock_frontend:1.0
+        - name: flask-app
+          image: rapkeb/stock_frontend:6.9
           ports:
             - containerPort: 5005
-
+        - name: nginx
+          image: nginx:latest
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx/conf.d
+              readOnly: true
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: nginx-config

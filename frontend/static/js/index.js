@@ -1,10 +1,10 @@
 let selectedCompanies = [];
 let timer;
 
-document.addEventListener('DOMContentLoaded', () => {
-    populateSectorDropdown();
-    getRandomCompanies();
-});
+// document.addEventListener('DOMContentLoaded', () => {
+//     populateSectorDropdown();
+//     getRandomCompanies();
+// });
 
 function getRandomCompanies() {
     const companyDivs = document.querySelectorAll('.company-div');
@@ -45,7 +45,7 @@ function showChart(companyName, share) {
 // Check if companyName is not in selectedCompanies
 if (!selectedCompanies.includes(companyName)) {
 // Redirect to the company page with the company name and sector as query parameters
-window.location.href = `/company?company=${encodeURIComponent(companyName)}&share=${encodeURIComponent(share)}`;
+window.location.href = `/front/company?company=${encodeURIComponent(companyName)}&share=${encodeURIComponent(share)}`;
 }
 }
 
@@ -75,7 +75,7 @@ function toggleSelectCompany(companyName) {
 
 function compareCompanies() {
     if (selectedCompanies.length === 2) {
-        window.location.href = `/compare?company1=${encodeURIComponent(selectedCompanies[0])}&company2=${encodeURIComponent(selectedCompanies[1])}`;
+        window.location.href = `/front/compare_shares?company1=${encodeURIComponent(selectedCompanies[0])}&company2=${encodeURIComponent(selectedCompanies[1])}`;
     }
 }
 
@@ -102,3 +102,42 @@ function filterCompanies() {
         });
     }
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    const backendApiUrl = '/back/homepage'; // Ensure this matches your backend route
+    const companiesContainer = document.getElementById('companies-container');
+
+    fetch(backendApiUrl)
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            }
+            throw new Error('Network response was not ok');
+        })
+        .then(companies => {
+            companiesContainer.innerHTML = ''; // Clear existing content
+            companies.forEach(company => {
+                const companyDiv = document.createElement('div');
+                companyDiv.classList.add('company-div');
+                companyDiv.dataset.company = company.Company;
+                companyDiv.dataset.sector = company.Sector;
+                companyDiv.innerHTML = `
+                    <p class="company">${company.Company}</p>
+                    <p class="share">${company.Share}</p>
+                    <p class="sector">Sector: ${company.Sector}</p>
+                    <p class="industry">Industry: ${company.Industry}</p>
+                `;
+                companyDiv.onclick = () => showChart(company.Company, company.Share);
+                companyDiv.onmousedown = (event) => startSelectCompany(event, company.Company);
+                companyDiv.onmouseup = (event) => stopSelectCompany(event);
+                
+                companiesContainer.appendChild(companyDiv);
+            });
+            populateSectorDropdown();
+            getRandomCompanies();
+        })
+        .catch(error => {
+            console.error('Error fetching company data:', error);
+        });
+});
+

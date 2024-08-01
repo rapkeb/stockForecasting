@@ -11,10 +11,10 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
  
 configure_routes(app)
-login_manager = LoginManager()
-login_manager.init_app(app)
-login_manager.login_view = 'login'  # Redirect to the login view if not authenticated
-login_manager.login_message = "צריכים להיות מחוברים כדי לגשת לדף זה"
+# login_manager = LoginManager()
+# login_manager.init_app(app)
+# login_manager.login_view = 'login'  # Redirect to the login view if not authenticated
+# login_manager.login_message = "צריכים להיות מחוברים כדי לגשת לדף זה"
 
 # @login_manager.user_loader
 # def load_user(user_id):

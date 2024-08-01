@@ -4,18 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Company Chart Comparison</title>
-    <link rel="stylesheet" href="../static/css/compare_shares.css">
+    <link rel="stylesheet" href="static/css/compare_shares.css">
     <!-- Moment.js -->
     <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/min/moment.min.js"></script>
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     <!-- Chart.js Date Adapter -->
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@^1"></script>
-    <script>
-        const data1 = {{ data1|tojson }};
-        const data2 = {{ data2|tojson }};
-    </script>
-    <script src="/static/js/compare_shares.js"></script>
+    <script src="static/js/compare_shares.js"></script>
 </head>
 <body>
     {% include 'menu.html' %}
