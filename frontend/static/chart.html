@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Company Chart</title>
-    <link rel="stylesheet" href="static/css/chart.css">
+    <link rel="stylesheet" href="css/chart.css">
     <!-- Moment.js -->
 <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/min/moment.min.js"></script>
 <!-- Chart.js -->
@@ -12,19 +12,42 @@
 <!-- Chart.js Date Adapter -->
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@^1"></script>
 <script>
-    const symbol = '{{share}}';  // Replace with dynamic symbol if needed
-    const company = '{{company}}'; 
+    // const symbol = '{{share}}';  // Replace with dynamic symbol if needed
+    // const company = '{{company}}'; 
+    // const urlParams = new URLSearchParams(window.location.search);
+    // const company = urlParams.get('company');
+    // const symbol = urlParams.get('share');
+    // document.getElementById('title').innerHTML = company + "Chart";
 </script>
-<script src="static/js/chart.js"></script>
+<script src="js/chart.js"></script>
+<link rel="stylesheet" href="css/menu.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@100..900&family=Ga+Maamli&family=Poiret+One&display=swap" rel="stylesheet">
 </head>
 <body>
-    {% include 'menu.html' %}
-    <h1 id="title">{{ company }} Chart</h1>
+    <div class="hamburger-container">
+        <div class="hamburger-menu">
+            <div class="hamburger-bar"></div>
+            <div class="hamburger-bar"></div>
+            <div class="hamburger-bar"></div>
+        </div>
+        <nav class="sidebar">
+            <ul>
+                <li><a href="/index">Home</a></li>
+                <li><a href="/preferences">My preferences</a></li>
+                <li><a href="/purchases">View Purchases</a></li>
+                <li><a href="#" id="logoutLink">Logout</a></li>
+            </ul>
+        </nav>
+    </div>
+    <script src="js/menu.js"></script>
+    <h1 id="title"></h1>
     <div id="fetchButtonContainer">
         <button id="fetchButton"></button>
         <div id="tooltip">ask the analysts</div>
     </div>
-    <h2 id="share" hidden>{{share}}</h2>
+    <h2 id="share" hidden></h2>
     <div id="controls">
         <label for="dataType">Select Data Type:</label>
         <select id="dataType">

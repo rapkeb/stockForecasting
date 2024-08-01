@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(response => {
             if (response.ok) {
                 // Redirect to the homepage or login page after successful logout
-                window.location.href = '/front/login';
+                window.location.href = '/login';
             } else {
                 // Handle error, e.g., show an error message
                 console.error('Logout failed');

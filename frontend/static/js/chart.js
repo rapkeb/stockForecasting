@@ -1,4 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const company = urlParams.get('company');
+    const symbol = urlParams.get('share');
+    document.getElementById('title').innerHTML = company + "Chart";
+    document.getElementById('share').innerHTML = symbol;
     let data;
     fetch(`/back/company_chart?share=${symbol}`)
                 .then(response => response.json())

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Purchases</title>
-    <link rel="stylesheet" href="static/css/preferences.css">
+    <link rel="stylesheet" href="css/preferences.css">
     <style>
         .purchases-container {
             display: flex;
@@ -76,9 +76,28 @@
             text-align: center;
         }
     </style>
+<link rel="stylesheet" href="css/menu.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@100..900&family=Ga+Maamli&family=Poiret+One&display=swap" rel="stylesheet">
 </head>
 <body>
-    {% include 'menu.html' %}
+<div class="hamburger-container">
+    <div class="hamburger-menu">
+        <div class="hamburger-bar"></div>
+        <div class="hamburger-bar"></div>
+        <div class="hamburger-bar"></div>
+    </div>
+    <nav class="sidebar">
+        <ul>
+            <li><a href="/index">Home</a></li>
+            <li><a href="/preferences">My preferences</a></li>
+            <li><a href="/purchases">View Purchases</a></li>
+            <li><a href="#" id="logoutLink">Logout</a></li>
+        </ul>
+    </nav>
+</div>
+<script src="js/menu.js"></script>
     <div class="purchases-container">
         <h1 id="pu">Your Purchases</h1>
         <table>

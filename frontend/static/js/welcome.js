@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Store user data in session storage or handle successful login
                 sessionStorage.setItem('username', username);
                 sessionStorage.setItem('user_id', data.user_id);
-                window.location.href = `/front/homepage`;
+                window.location.href = `/index`;
             } else {
                 // Show error message
                 alert(data.message);
@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             if (data.status === 'success') {
-                window.location.href = '/front/login'; // Redirect to login page
+                window.location.href = '/login'; // Redirect to login page
             } else {
                 // Show error message
                 alert(data.message);

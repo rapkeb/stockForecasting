@@ -45,7 +45,7 @@ function showChart(companyName, share) {
 // Check if companyName is not in selectedCompanies
 if (!selectedCompanies.includes(companyName)) {
 // Redirect to the company page with the company name and sector as query parameters
-window.location.href = `/front/company?company=${encodeURIComponent(companyName)}&share=${encodeURIComponent(share)}`;
+window.location.href = `/chart?company=${encodeURIComponent(companyName)}&share=${encodeURIComponent(share)}`;
 }
 }
 
@@ -75,7 +75,7 @@ function toggleSelectCompany(companyName) {
 
 function compareCompanies() {
     if (selectedCompanies.length === 2) {
-        window.location.href = `/front/compare_shares?company1=${encodeURIComponent(selectedCompanies[0])}&company2=${encodeURIComponent(selectedCompanies[1])}`;
+        window.location.href = `/compare_shares?company1=${encodeURIComponent(selectedCompanies[0])}&company2=${encodeURIComponent(selectedCompanies[1])}`;
     }
 }
 

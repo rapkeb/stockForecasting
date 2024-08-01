@@ -1,11 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // const company1 = new URLSearchParams(window.location.search).get('company1');
-    // const company2 = new URLSearchParams(window.location.search).get('company2');
-    const company1 = document.getElementById('chartTitle1').innerText;
-    const company2 = document.getElementById('chartTitle2').innerText;
-    console.log(company1)
+    const urlParams = new URLSearchParams(window.location.search);
+    const company1 = urlParams.get('company1');
+    const company2 = urlParams.get('company2');
+    document.getElementById('chartTitle1').innerText = company1;    
+    document.getElementById('chartTitle2').innerText = company2;
 
-    fetch(`/back/compare_shares?company1=${company1}&company2=${company2}`)
+    fetch(`/back/compare_shares?company1=${encodeURIComponent(company1)}&company2=${encodeURIComponent(company2)}`)
         .then(response => response.json())
         .then(data => {
             if (data.error) {
