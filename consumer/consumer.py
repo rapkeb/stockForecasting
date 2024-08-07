@@ -1,4 +1,6 @@
 from confluent_kafka import Consumer
+import requests
+
 
 # Kafka Configuration
 conf = {
@@ -9,6 +11,16 @@ conf = {
 consumer = Consumer(conf)
 consumer.subscribe(['user-interactions'])
 
+def send_to_db(message):
+    url = 'http://db:80/write_user_interaction'  # Replace with your service's URL
+    payload = {"message": message}
+    try:
+        response = requests.post(url, json=payload)
+        response.raise_for_status()
+        print(f"Message sent to DB service: {message}")
+    except requests.exceptions.RequestException as e:
+        print(f"Failed to send message to DB service: {e}")
+
 while True:
     msg = consumer.poll(1.0)
     if msg is None:
@@ -17,4 +29,6 @@ while True:
         print(f"Consumer error: {msg.error()}")
         continue
     # Process the message
-    print(f"Received message: {msg.value().decode('utf-8')}")
+    message = msg.value().decode('utf-8')
+    print(f"Received message: {message}")
+    send_to_db(message)

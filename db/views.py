@@ -19,6 +19,11 @@ client = MongoClient(mongo_host, mongo_port)
 db = client[database_name]
 users_collection = db[collection_name]
 purchases_collection = db['purchases']
+interactions_collection = db['interactions']
+
+documents = interactions_collection.find()
+for document in documents:
+    print(document)
 
 _df = pd.read_csv('companylist.csv')
 df = _df.copy()
@@ -199,5 +204,16 @@ def is_logged_in():
         return jsonify({'is_logged_in': True})
     else:
         return jsonify({'is_logged_in': False})
+    
+
+def write_user_interaction():
+    data = request.json
+    if not data or "message" not in data:
+        return jsonify({"error": "Invalid input"}), 400
+    try:
+        interactions_collection.insert_one({"message": data["message"]})
+        return jsonify({"status": "success"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
