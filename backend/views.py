@@ -9,10 +9,24 @@ from statsmodels.tsa.seasonal import STL
 from sklearn.metrics import mean_squared_error, accuracy_score
 # from mongo.db import find_user_by_username, update_prefernces, buy_share1, get_user_purchases
 from flask_login import login_required
+from confluent_kafka import Producer # Kafka Configuration 
 
 _df = pd.read_csv('companylist.csv')
 df = _df.copy()
 df = df.fillna('N/A')
+
+conf = {'bootstrap.servers': 'kafka:9092'}  # Kafka service name and port in Minikube
+producer = Producer(conf) 
+def delivery_report(err, msg): 
+    if err is not None: 
+        print(f"Message delivery failed: {err}")
+    else:
+        print(f"Message delivered to {msg.topic()} [{msg.partition()}]")
+
+
+def send_message(topic, message):
+    producer.produce(topic, message, callback=delivery_report) 
+    producer.flush()
 
 
 def company_chart():
@@ -34,6 +48,7 @@ def company_chart():
         }
 
     formatted_data = format_data(df)
+    send_message('user-interactions', str(share))
     return jsonify(formatted_data)
 
 
@@ -255,10 +270,81 @@ def calculate_trend_accuracy(df, forecast):
     accuracy = accuracy_score(actual_trend > 0, forecast_trend > 0)
     return accuracy
 
-@login_required
-def purchases():
-    # Retrieve all purchases for the current user from the database
-    purchases = get_user_purchases()
-    # Convert MongoDB cursor to list
-    purchase_list = list(purchases)
-    return render_template('purchases.html', purchases=purchase_list)
+
+def get_historical_data(share):
+    actual_date = dt.date.today()
+    past_date = actual_date - dt.timedelta(days=365 * 5)
+    actual_date = actual_date.strftime("%Y-%m-%d")
+    past_date = past_date.strftime("%Y-%m-%d")
+    data = yf.download(share, start=past_date, end=actual_date)
+    return pd.DataFrame(data).reset_index()
+
+def calculate_percentage_change(df):
+    if not df.empty:
+        start_price = df.iloc[0]['Close']
+        end_price = df.iloc[-1]['Close']
+        return ((end_price - start_price) / start_price) * 100
+    else:
+        return None
+
+def find_best_share(share_list):
+    best_share = None
+    best_change = -float('inf')  # Initialize with negative infinity to find the maximum
+
+    for share in share_list:
+        df = get_historical_data(share)
+        percentage_change = calculate_percentage_change(df)
+        
+        if percentage_change is not None and percentage_change > best_change:
+            best_change = percentage_change
+            best_share = share
+
+    return best_share, best_change
+
+def best_share_long():
+    sectors = fetch_user_preferences()
+    filtered_shares_df = filter_shares_by_sector(df, sectors)
+    share_list = get_share_names(filtered_shares_df)
+    best_share, best_change = find_best_share(share_list)
+    if best_share:
+        response = {
+            'best_share': best_share,
+            'percentage_change': best_change
+        }
+    else:
+        response = {'message': 'No valid data found for the provided shares.'}
+    
+    return jsonify(response)
+
+
+def fetch_user_preferences():
+    url = 'http://localhost:80/db/preferences'  # Replace with your Flask app's URL
+    try:
+        response = requests.get(url, headers={'Content-Type': 'application/json'})
+        response.raise_for_status()  # Raise an error for bad HTTP status codes
+        data = response.json()
+
+        # Extract the preferences and sectors from the JSON response
+        print(data)
+        preferences = data.get('preferences', {})
+        sectors = preferences.get('sectors', [])
+        print(sectors)
+        return sectors
+    except requests.RequestException as e:
+        print(f"An error occurred: {e}")
+        return None
+    
+
+def filter_shares_by_sector(df, sectors):
+    if sectors:
+        # Filter the DataFrame based on the sectors
+        filtered_df = df[df['Sector'].isin(sectors)]
+        return filtered_df
+    else:
+        return pd.DataFrame()  # Return an empty DataFrame if no sectors are provided
+
+def get_share_names(df):
+    # Extract the 'Share' column as a list
+    return ['AMZN', 'AAPL']
+    return df['Share'].tolist()
+

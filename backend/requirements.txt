@@ -39,3 +39,4 @@ Werkzeug==3.0.3
 wheel==0.43.0
 yfinance==0.2.41
 python-dotenv==1.0.1
+confluent-kafka==2.5.0

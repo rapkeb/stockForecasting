@@ -29,6 +29,9 @@ spec:
     spec:
       containers:
       - name: backend
-        image: rapkeb/stock_backend:6.3
+        image: rapkeb/stock_backend:7.6
         ports:
         - containerPort: 5005
+        env:
+        - name: KAFKA_BROKER
+          value: kafka:9092
