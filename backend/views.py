@@ -48,7 +48,7 @@ def company_chart():
         }
 
     formatted_data = format_data(df)
-    send_message('user-interactions', str(share))
+    send_message('shares', str(share))
     return jsonify(formatted_data)
 
 
@@ -87,6 +87,9 @@ def compare_shares():
 
     data1 = format_data(company1_data)
     data2 = format_data(company2_data)
+
+    send_message('shares', str(share1))
+    send_message('shares', str(share2))
 
     return jsonify({
         'company1': company1_name,

@@ -1,3 +1,20 @@
+document.addEventListener('DOMContentLoaded', () => {
+
+const statisticsMenuItem = document.getElementById('statisticsMenuItem');
+
+// Fetch login status from the server
+fetch('/db/admin')
+    .then(response => response.json())
+    .then(data => {
+        if (!data.is_admin) {
+            // Hide the statistics menu item if the user is not an admin
+            statisticsMenuItem.style.display = 'none';
+        }
+    })
+    .catch(error => {
+        console.error('Error checking admin status:', error);
+    });
+
 // Determine the current path
 const currentPath = window.location.pathname;
 // Define the paths where you want to redirect logged-in users
@@ -25,3 +42,5 @@ fetch('/db/auth')
         console.error('Error checking login status:', error);
         // Optionally handle the error, e.g., show a message to the user
     });
+
+});

@@ -26,7 +26,7 @@ spec:
     spec:
       containers:
         - name: consumer-service
-          image: rapkeb/stock_consumer:1.3
+          image: rapkeb/stock_consumer:1.5
           env:
             - name: KAFKA_BROKER
               value: kafka:9092

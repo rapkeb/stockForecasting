@@ -3,10 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Best Share Finder</title>
+    <title>Statistics Dashboard</title>
+    <link rel="stylesheet" href="css/statistics.css">
+    <link rel="stylesheet" href="css/menu.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@100..900&family=Ga+Maamli&family=Poiret+One&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="hamburger-container">
@@ -26,28 +29,26 @@
             </ul>
         </nav>
     </div>
-    <h1>Find the Best Performing Share</h1>
-    <button id="findBestShareButton">Find Best Share</button>
-    <div id="result"></div>
-
-    <script>
-        document.getElementById('findBestShareButton').addEventListener('click', function() {
-            fetch('/back/best_share_long')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.best_share) {
-                        document.getElementById('result').innerHTML = `
-                            <p>Best Share: ${data.best_share}</p>
-                            <p>Percentage Change: ${data.percentage_change.toFixed(2)}%</p>
-                        `;
-                    } else {
-                        document.getElementById('result').innerHTML = `<p>${data.message}</p>`;
-                    }
-                })
-                .catch(error => {
-                    document.getElementById('result').innerHTML = `<p>Error: ${error.message}</p>`;
-                });
-        });
-    </script>
+    <script src="js/menu.js"></script>
+    <div class="container">
+        <h1>Statistics Dashboard</h1>
+        
+        <!-- Filters -->
+        <div class="filters">
+            <label for="filterDate">Select Date Range:</label>
+            <input type="date" id="startDate">
+            <input type="date" id="endDate">
+            <button id="applyFilters">Apply Filters</button>
+        </div>
+        
+        <!-- Graphs -->
+        <div class="graphs">
+            <canvas id="loginInteractionsGraph" class="graph"></canvas>
+            <canvas id="sharesInteractionsGraph" class="graph"></canvas>
+            <canvas id="buyShareGraph" class="graph"></canvas>
+        </div>
+    </div>
+    
+    <script src="js/statistics.js"></script>
 </body>
 </html>
