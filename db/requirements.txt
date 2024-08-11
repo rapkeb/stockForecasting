@@ -40,3 +40,5 @@ Werkzeug==3.0.3
 wheel==0.43.0
 yfinance==0.2.41
 confluent_kafka==2.5.0
+Flask-Session==0.8.0
+Flask-SocketIO==5.3.6

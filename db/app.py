@@ -5,10 +5,17 @@ from dotenv import load_dotenv
 from flask_login import LoginManager
 from views import user_from_dict, users_collection
 from bson import ObjectId
-
+from flask_socketio import SocketIO
+from flask_session import Session
 
 app = Flask(__name__)
+
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
+app.config['SESSION_TYPE'] = 'filesystem'
+app.config['SESSION_COOKIE_NAME'] = 'session_app1'
+Session(app)
+
+socketio = SocketIO(app)
 
 
 load_dotenv()
@@ -29,6 +36,6 @@ def load_user(user_id):
 
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5005)
+    socketio.run(debug=True, port=5005)
 
 

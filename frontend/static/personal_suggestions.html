@@ -7,6 +7,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@100..900&family=Ga+Maamli&family=Poiret+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/chat.css">
+    <link rel="stylesheet" href="css/menu.css">
+    <script src="js/auth.js"></script>
 </head>
 <body>
     <div class="hamburger-container">
@@ -25,29 +28,22 @@
                 <li><a href="#" id="logoutLink">Logout</a></li>
             </ul>
         </nav>
+        <script src="js/menu.js"></script>
     </div>
-    <h1>Find the Best Performing Share</h1>
-    <button id="findBestShareButton">Find Best Share</button>
-    <div id="result"></div>
+    <div class="container">
+    <div id="suggest">
+        
+    </div>
+    <div class="chat-container">
+        <div id="chatbox" dir="auto">
+            <!-- Chat messages will appear here -->
+        </div>
+        <input type="text" id="user-input" dir="auto" placeholder="Type your message...">
+        <button onclick="sendMessage()">Send</button>
+        <button onclick="resetChat()">Reset</button>
+    </div>
+    </div>
 
-    <script>
-        document.getElementById('findBestShareButton').addEventListener('click', function() {
-            fetch('/back/best_share_long')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.best_share) {
-                        document.getElementById('result').innerHTML = `
-                            <p>Best Share: ${data.best_share}</p>
-                            <p>Percentage Change: ${data.percentage_change.toFixed(2)}%</p>
-                        `;
-                    } else {
-                        document.getElementById('result').innerHTML = `<p>${data.message}</p>`;
-                    }
-                })
-                .catch(error => {
-                    document.getElementById('result').innerHTML = `<p>Error: ${error.message}</p>`;
-                });
-        });
-    </script>
+    <script src="js/chat.js"></script>
 </body>
 </html>

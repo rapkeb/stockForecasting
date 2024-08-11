@@ -1,19 +1,16 @@
 document.addEventListener('DOMContentLoaded', () => {
-
-const statisticsMenuItem = document.getElementById('statisticsMenuItem');
-
 // Fetch login status from the server
-fetch('/db/admin')
-    .then(response => response.json())
-    .then(data => {
-        if (!data.is_admin) {
-            // Hide the statistics menu item if the user is not an admin
-            statisticsMenuItem.style.display = 'none';
-        }
-    })
-    .catch(error => {
-        console.error('Error checking admin status:', error);
-    });
+// fetch('/db/admin')
+//     .then(response => response.json())
+//     .then(data => {
+//         if (!data.is_admin) {
+//             // Hide the statistics menu item if the user is not an admin
+//             statisticsMenuItem.style.display = 'none';
+//         }
+//     })
+//     .catch(error => {
+//         console.error('Error checking admin status:', error);
+//     });
 
 // Determine the current path
 const currentPath = window.location.pathname;
@@ -23,13 +20,18 @@ const authPages = ['/login', '/register'];
 const isAuthPage = authPages.includes(currentPath);
 
 // Fetch login status from the server
-fetch('/db/auth')
+fetch('/db/admin')
     .then(response => response.json())
     .then(data => {
         if (data.is_logged_in) {
             if (isAuthPage) {
                 // Redirect to the index page if already logged in and on an auth page
                 window.location.href = '/index';  // Replace with your index page URL
+            }
+            if (!data.is_admin) {
+                const statisticsMenuItem = document.getElementById('statisticsMenuItem');
+                // Hide the statistics menu item if the user is not an admin
+                statisticsMenuItem.style.display = 'none';
             }
         } else {
             // Redirect to login page if not logged in and on an auth page

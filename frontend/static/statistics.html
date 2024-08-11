@@ -48,6 +48,18 @@
             <canvas id="buyShareGraph" class="graph"></canvas>
         </div>
     </div>
+    <script>
+        const socket = io('http://frontend:80'); // Replace with your Nginx server URL
+
+        socket.on('connect', () => {
+            console.log('Connected to WebSocket server');
+        });
+
+        socket.on('update_data', (message) => {
+            console.log('Received update:', message);
+            // Handle real-time data updates here
+        });
+    </script>
     
     <script src="js/statistics.js"></script>
 </body>
