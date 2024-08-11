@@ -29,6 +29,6 @@ spec:
     spec:
       containers:
       - name: db
-        image: rapkeb/stock_db:8.9
+        image: rapkeb/stock_db:10.9
         ports:
         - containerPort: 5005

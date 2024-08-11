@@ -5,7 +5,7 @@ from models import check_password_hash
 from pymongo import MongoClient
 # from dotenv import load_dotenv
 from flask_login import current_user, login_user, logout_user, login_required
-from flask import request, session, jsonify, Flask
+from flask import request, session, jsonify, current_app
 from models import User
 from confluent_kafka import Producer # Kafka Configuration 
 from bson.son import SON
@@ -236,10 +236,26 @@ def write_user_interaction():
         collection = db[collection_name]
         time_as_datetime = datetime.fromtimestamp(time)
         collection.insert_one({"message": message, "time": time_as_datetime})
+        emit_updated_data(topic)
         return jsonify({"status": "success"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     #
+
+def emit_updated_data(topic):
+    try:  
+        if topic == 'login':
+            interactions_data = get_login_interactions_for_emit()
+        elif topic == 'shares':
+            interactions_data = get_shares_interactions()
+        elif topic == 'buy':
+            interactions_data = get_buy_interactions()
+        print(topic)
+        print(interactions_data)
+        socketio = current_app.extensions['socketio']
+        socketio.emit(f'{topic}_update', interactions_data)
+    except Exception as e:
+        print(f"Error emitting updated data: {e}")
 
 def get_login_interactions():
     start_date = request.args.get('startDate')
@@ -259,6 +275,39 @@ def get_login_interactions():
         'labels': [d['_id'] for d in data],
         'values': [d['count'] for d in data]
     })
+
+def get_login_interactions_for_emit(start_date=None, end_date=None):
+    # Define default dates if not provided
+    default_start_date = datetime(2024, 1, 1)
+    default_end_date = datetime.now()
+
+    # Use default dates if arguments are not provided
+    start_date = start_date or default_start_date
+    end_date = end_date or default_end_date
+
+    # Ensure end_date is not before start_date
+    if end_date < start_date:
+        end_date = start_date
+
+    # MongoDB aggregation pipeline
+    pipeline = [
+        {"$match": {"time": {"$gte": start_date, "$lte": end_date}}},
+        {"$group": {
+            "_id": {"$dateToString": {"format": "%Y-%m-%d", "date": "$time"}},
+            "count": {"$sum": 1}
+        }},
+        {"$sort": SON([("_id", 1)])}  # Sort by date ascending
+    ]
+
+    # Execute aggregation pipeline
+    data = list(db.login_interactions.aggregate(pipeline))
+
+    # Return the data in a format suitable for emitting
+    return {
+        'labels': [d['_id'] for d in data],
+        'values': [d['count'] for d in data]
+    }
+
 
 def get_shares_interactions():
     start_date_str = request.args.get('startDate')

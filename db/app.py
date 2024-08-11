@@ -15,7 +15,7 @@ app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SESSION_COOKIE_NAME'] = 'session_app1'
 Session(app)
 
-socketio = SocketIO(app)
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 
 load_dotenv()
@@ -33,6 +33,12 @@ def load_user(user_id):
         return user_from_dict(user_data)
     return None
 
+
+@socketio.on('connect')
+def handle_connect():
+    print('Client connected')
+
+socketio.init_app(app)
 
 
 if __name__ == '__main__':
