@@ -247,11 +247,9 @@ def emit_updated_data(topic):
         if topic == 'login':
             interactions_data = get_login_interactions_for_emit()
         elif topic == 'shares':
-            interactions_data = get_shares_interactions()
+            interactions_data = get_shares_interactions_for_emit()
         elif topic == 'buy':
-            interactions_data = get_buy_interactions()
-        print(topic)
-        print(interactions_data)
+            interactions_data = get_buy_interactions_for_emit()
         socketio = current_app.extensions['socketio']
         socketio.emit(f'{topic}_update', interactions_data)
     except Exception as e:
@@ -338,6 +336,42 @@ def get_shares_interactions():
         'values': values
     })
 
+
+def get_shares_interactions_for_emit():
+    # Define default dates if not provided
+    # default_start_date = datetime(2024, 1, 1)
+    # default_end_date = datetime.now()
+
+    # # Use default dates if arguments are not provided
+    # start_date = start_date or default_start_date
+    # end_date = end_date or default_end_date
+
+    # # Ensure end_date is not before start_date
+    # if end_date < start_date:
+    #     end_date = start_date
+
+    start_date = None
+    end_date = None
+
+    pipeline = [
+        {"$match": {"time": {"$gte": start_date, "$lte": end_date}} if start_date and end_date else {}},
+        {"$group": {
+            "_id": "$message",  # Group by the share name (or 'message' in this case)
+            "count": {"$sum": 1}  # Count occurrences
+        }},
+        {"$sort": {"count": -1}}  # Sort by count descending
+    ]
+    data = list(db.shares_interactions.aggregate(pipeline))
+    # Prepare data for pie chart
+    labels = [d['_id'] for d in data]
+    values = [d['count'] for d in data]
+    result = {
+        'labels': labels,
+        'values': values
+    }
+
+    return result
+
 def get_buy_interactions():
     start_date_str = request.args.get('startDate')
     end_date_str = request.args.get('endDate')
@@ -372,5 +406,45 @@ def get_buy_interactions():
         'labels': labels,
         'values': values
     })
+
+
+def get_buy_interactions_for_emit(start_date=None, end_date=None):
+    # Define default dates if not provided
+    default_start_date = datetime(2024, 1, 1)
+    default_end_date = datetime.now()
+
+    # Use default dates if arguments are not provided
+    start_date = start_date or default_start_date
+    end_date = end_date or default_end_date
+
+    # Ensure end_date is not before start_date
+    if end_date < start_date:
+        end_date = start_date
+
+    pipeline = [
+        {"$match": {"time": {"$gte": start_date, "$lte": end_date}} if start_date and end_date else {}},
+        {"$addFields": {
+            "amount": {"$toDouble": "$message"}  # Convert the 'message' field to a double
+        }},
+        {"$group": {
+            "_id": {"$dateToString": {"format": "%Y-%m-%d", "date": "$time"}},
+            "total_amount": {"$sum": "$amount"}  # Sum the converted amount
+        }},
+        {"$sort": {"_id": 1}}  # Sort by date ascending
+    ]
+
+    data = list(db.buy_interactions.aggregate(pipeline))
+    
+    # Prepare data for line chart
+    labels = [d['_id'] for d in data]
+    values = [d['total_amount'] for d in data]
+
+    # Create a dictionary instead of returning a Response object
+    result = {
+        'labels': labels,
+        'values': values
+    }
+    
+    return result  # Return the dictionary
 
 

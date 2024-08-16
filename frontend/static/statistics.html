@@ -266,31 +266,53 @@
     // Initial load with today's date
     fetchStatistics(today, tomorrow);
 
-        function handleUpdate(topic, data) {
-        console.log(`Received update for ${topic}:`, data);
-        // Update the graph here with the new data
-        // You can use Chart.js to update your charts
-        if (topic === 'login_interactions') {
-            renderLoginInteractionsGraph(data);
-        } else if (topic === 'shares_interactions') {
-            renderSharesInteractionsGraph(data);
-        } else if (topic === 'buy_share') {
-            renderBuyShareGraph(data);
-        }
-        }
+    function handleUpdate(topic, data) {
+        if (topic === 'login_interactions' || topic === 'buy_share') {
+            const selectedStartDate = new Date(startDateInput.value);
+            const selectedEndDate = new Date(endDateInput.value);
 
-        socket.on('login_update', (data) => {
+            // Filter the data to include only those entries within the selected date range
+            const filteredData = {
+                labels: [],
+                values: []
+            };
+
+            data.labels.forEach((label, index) => {
+                const dataDate = new Date(label); // Assuming 'label' contains the date
+
+                if (dataDate >= selectedStartDate && dataDate <= selectedEndDate) {
+                    filteredData.labels.push(label);
+                    filteredData.values.push(data.values[index]);
+                }
+            });
+
+            // Update the relevant graph with the filtered data
+            if (topic === 'login_interactions') {
+                renderLoginInteractionsGraph(filteredData);
+            } else if (topic === 'buy_share') {
+                renderBuyShareGraph(filteredData);
+            }
+        } else if (topic === 'shares_interactions') {
+            // Since shares_interactions doesn't have dates, we just update the graph directly
+            renderSharesInteractionsGraph(data);
+        }
+    }
+
+    socket.on('login_update', (data) => {
         console.log('login');
         handleUpdate('login_interactions', data);
-        });
+    });
 
-        socket.on('shares_update', (data) => {
+    socket.on('shares_update', (data) => {
+        console.log('shares');
         handleUpdate('shares_interactions', data);
-        });
+    });
 
-        socket.on('buy_update', (data) => {
+    socket.on('buy_update', (data) => {
+        console.log('buy');
         handleUpdate('buy_share', data);
-        });
+    });
+
     </script>
     <!-- <script src="js/statistics.js"></script> -->
 </body>
