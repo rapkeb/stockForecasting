@@ -293,11 +293,15 @@ document.addEventListener('DOMContentLoaded', () => {
             // Example logic for showing prediction result
             // Replace with actual prediction logic
             resultElement.textContent = `${data.prediction}`;
+            resultElement.classList.add('flicker', 'enlarge');
             resultElement.style.display = 'block'; // Show the result
             window.scrollTo({
                 top: document.body.scrollHeight,
                 behavior: 'smooth'
             });
+            setTimeout(() => {
+                resultElement.classList.remove('flicker');
+            }, 1500); // Matches the duration of the flicker animation (0.5s * 3 = 1.5s)
         } else {
             resultElement.textContent = 'Please select a date to get the prediction.';
             resultElement.style.display = 'block'; // Show the result

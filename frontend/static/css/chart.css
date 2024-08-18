@@ -168,3 +168,24 @@ input, select {
     text-align: center;
 }
 
+@keyframes flickerAnimation {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+@keyframes enlargeAnimation {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.5); }
+    100% { transform: scale(1); }
+}
+
+.flicker {
+    animation: flickerAnimation 0.5s ease-in-out 3; /* Duration 0.5s, repeat 3 times */
+}
+
+.enlarge {
+    font-size: 2em;
+    animation: enlargeAnimation 0.5s forwards;
+}
+
