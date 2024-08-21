@@ -134,17 +134,19 @@ def recommendation():
         return jsonify({'error': 'Failed to fetch recommendations'}), response.status_code
 
 def predict():
-    date = request.args.get('date')
+    date_str = request.args.get('date')
     share = request.args.get('share')
 
-    if not date or not share:
+    if not date_str or not share:
         return jsonify({"error": "Missing date or share parameter"}), 400
+
+    try:
+        target_date = dt.datetime.strptime(date_str, "%Y-%m-%d").date()
+    except ValueError:
+        return jsonify({"error": "Invalid date format"}), 400
 
     actual_date = dt.date.today()
     past_date = actual_date - dt.timedelta(days=365 * 3)
-
-    actual_date = actual_date.strftime("%Y-%m-%d")
-    past_date = past_date.strftime("%Y-%m-%d")
 
     stock_dataframe = get_stock_data(share, past_date, actual_date)
     gold_dataframe = get_gold_data(past_date, actual_date)
@@ -153,11 +155,25 @@ def predict():
     merged_dataframe = pd.merge(stock_dataframe, gold_dataframe, left_index=True, right_index=True)
     merged_dataframe = pd.merge(merged_dataframe, forex_dataframe, left_index=True, right_index=True)
 
-    forecast, trend, seasonal, resid = stl_forecast(merged_dataframe)
+    # Determine the number of days to forecast
+    forecast_days = (target_date - actual_date).days
+    
+    if forecast_days <= 0:
+        return jsonify({"error": "Target date must be in the future"}), 400
+
+    forecast, trend, seasonal, resid = stl_forecast(merged_dataframe, steps=forecast_days)
+    
+    if len(forecast) < forecast_days:
+        return jsonify({"error": "Unable to generate forecast for the specified date"}), 500
+    
+    # Retrieve the forecast for the target date
+    target_forecast_index = forecast_days - 1
+    todays_forecast = forecast[target_forecast_index]
+
     trend_accuracy = calculate_trend_accuracy(merged_dataframe, forecast)
-    todays_forecast = forecast[-1]
-    prediction = f"Predicted value for {share} on {date} is {todays_forecast}"
-    return jsonify({"prediction": prediction, "trend_accuracy": trend_accuracy})
+    prediction = f"Predicted value for {share} on {date_str} is {todays_forecast:.2f}"
+    
+    return jsonify({"prediction": prediction, "trend_accuracy": f" in {trend_accuracy} accuracy percent"})
 
 
 def get_stock_data(symbol, from_date, to_date):
@@ -231,8 +247,9 @@ def calculate_bollinger_bands(series, window=20, num_std_dev=2):
     lower_band = rolling_mean - (rolling_std * num_std_dev)
     return upper_band, lower_band
 
-def stl_forecast(df, steps=30, period=30):
-    stl = STL(df['Close'], period=period, seasonal=13)
+def stl_forecast(df, steps=30, period=7, seasonal=13):
+    # Fit STL decomposition
+    stl = STL(df['Close'], period=period, seasonal=seasonal)
     result = stl.fit()
 
     trend = result.trend
@@ -243,6 +260,12 @@ def stl_forecast(df, steps=30, period=30):
     seasonal_forecast = list(seasonal[-period:]) * (steps // period + 1)
     seasonal_forecast = seasonal_forecast[:steps]
     forecast = np.array(trend_forecast) + np.array(seasonal_forecast)
+
+    actual = df['Close'][-steps:].values
+    mse = mean_squared_error(actual, forecast[-steps:])
+    print(f'STL Forecast MSE: {mse}')
+
+    return forecast, trend, seasonal, resid
 
     # plt.figure(figsize=(12, 8))
     # plt.subplot(411)
@@ -259,12 +282,6 @@ def stl_forecast(df, steps=30, period=30):
     # plt.legend(loc='best')
     # plt.tight_layout()
     # plt.show()
-
-    actual = df['Close'][-steps:].values
-    mse = mean_squared_error(actual, forecast[-steps:])
-    print(f'STL Forecast MSE: {mse}')
-
-    return forecast, trend, seasonal, resid
 
 
 def calculate_trend_accuracy(df, forecast):

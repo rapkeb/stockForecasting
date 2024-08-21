@@ -29,7 +29,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: rapkeb/stock_backend:7.7
+        image: rapkeb/stock_back:8.0
         ports:
         - containerPort: 5005
         env:

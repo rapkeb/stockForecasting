@@ -285,6 +285,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const date = document.getElementById('selectedDate').value;
         const shareName = document.getElementById("share").innerText.trim();
         if (date) {
+            const selectedDate = new Date(date);
+    
+            // Get the current date
+            const currentDate = new Date();
+
+            // Check if the selected date is in the future
+            if (selectedDate > currentDate) {
             const response = await fetch(`/back/predict?date=${encodeURIComponent(date)}&share=${encodeURIComponent(shareName)}`);
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -302,6 +309,12 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 resultElement.classList.remove('flicker');
             }, 1500); // Matches the duration of the flicker animation (0.5s * 3 = 1.5s)
+        }
+        else
+        {
+            resultElement.textContent = 'Please select a future date to get the prediction.';
+            resultElement.style.display = 'block'; // Show the result
+        }
         } else {
             resultElement.textContent = 'Please select a date to get the prediction.';
             resultElement.style.display = 'block'; // Show the result
