@@ -1,0 +1,30 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background: linear-gradient(135deg, #21368d, #308edc);
+}
+#title {
+    text-align: center;
+    font-size: 36px;
+    margin-top: 20px;
+}
+#controls {
+    text-align: center;
+    margin-bottom: 20px;
+}
+#chartContainer {
+    width: 100%;
+    margin: 0 auto;
+}
+.chartWrapper {
+    text-align: center;
+    margin-bottom: 40px;
+}
+canvas {
+    width: 100% !important;
+    height: 300px !important;
+}
+.chartTitle {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}

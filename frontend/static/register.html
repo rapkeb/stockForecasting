@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="js/auth.js"></script>
+</head>
+<body>
+    <div class="background">
+        <canvas id="stockChart"></canvas>
+    </div>
+    <div class="login-container signup-container">
+        <div class="login-box signup-box">
+            <h2>Register</h2>
+            <form id="register-form">
+                <div class="input-box">
+                    <input type="text" name="username" required>
+                    <label>Username</label>
+                </div>
+                <div class="input-box">
+                    <input type="password" name="password" required>
+                    <label>Password</label>
+                </div>
+                <div class="input-box">
+                    <input type="password" name="confirm_password" required>
+                    <label>Confirm Password</label>
+                </div>
+                <button type="submit">Register</button>
+                <p class="login-link">Already have an account? <a href="/login">Sign in</a></p>
+            </form>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/welcome.js"></script>
+</body>
+</html>

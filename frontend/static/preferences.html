@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Preferences</title>
+    <link rel="stylesheet" href="css/preferences.css">
+    <link rel="stylesheet" href="css/menu.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@100..900&family=Ga+Maamli&family=Poiret+One&display=swap" rel="stylesheet">
+    <script src="js/auth.js"></script>
+</head>
+<body>
+    <div class="hamburger-container">
+        <div class="hamburger-menu">
+            <div class="hamburger-bar"></div>
+            <div class="hamburger-bar"></div>
+            <div class="hamburger-bar"></div>
+        </div>
+        <nav class="sidebar">
+            <ul>
+                <li><a href="/index">Home</a></li>
+                <li><a href="/preferences">My preferences</a></li>
+                <li><a href="/personal_suggestions">AI suggestions</a></li>
+                <li><a href="/purchases">View Purchases</a></li>
+                <li id="statisticsMenuItem"><a href="/statistics">Statistics Dashboard</a></li>
+                <li><a href="#" id="logoutLink">Logout</a></li>
+            </ul>
+        </nav>
+    </div>
+    <script src="js/menu.js"></script>
+    <div class="preferences-container">
+        <div class="preferences-box">
+            <h2>Update Your Preferences</h2>
+            <form id="preferences-form">
+                <div class="input-box">
+                    <label for="sectors">Preferred Sectors:</label>
+                    <select id="sectors" name="sectors" multiple required>
+                    </select>
+                </div>
+                <div class="input-box">
+                    <label for="risk_tolerance">Risk Tolerance:</label>
+                    <select id="risk_tolerance" name="risk_tolerance" required>
+                        <option value="" disabled>Select Risk Tolerance</option>
+                        <option value="Low">Low</option>
+                        <option value="Medium">Medium</option>
+                        <option value="High">High</option>
+                    </select>
+                </div>
+                <div class="input-box">
+                    <label for="investment_horizon">Investment Horizon:</label>
+                    <select id="investment_horizon" name="investment_horizon" required>
+                        <option value="" disabled>Select Investment Horizon</option>
+                        <option value="Short-term">Short-term</option>
+                        <option value="Long-term">Long-term</option>
+                    </select>
+                </div>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+
+        <div class="current-preferences-box">
+            <h2>Current Preferences</h2>
+            <div class="current-preferences">
+                <p><strong>Preferred Sectors:</strong> <span id="current-sectors"></span></p>
+                <p><strong>Risk Tolerance:</strong> <span id="current-risk-tolerance"></span></p>
+                <p><strong>Investment Horizon:</strong> <span id="current-investment-horizon"></span></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Fetch current preferences when the page loads
+            fetch('/db/preferences', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const { preferences, sectors } = data;
+                const sectorsSelect = document.getElementById('sectors');
+                const currentSectors = document.getElementById('current-sectors');
+                const riskTolerance = document.getElementById('current-risk-tolerance');
+                const investmentHorizon = document.getElementById('current-investment-horizon');
+
+                // Populate the sectors select box with current preferences
+                sectors.forEach(sector => {
+                    const option = document.createElement('option');
+                    option.value = sector;
+                    option.textContent = sector;
+                    if (preferences.sectors && preferences.sectors.includes(sector)) {
+                        option.selected = true;
+                    }
+                    sectorsSelect.appendChild(option);
+                });
+
+                // Display current preferences
+                if(preferences.sectors)
+                {
+                    currentSectors.textContent = preferences.sectors.join(', ');
+                }
+                else{
+                    currentSectors.textContent = 'Not set';
+                }
+                riskTolerance.textContent = preferences.risk_tolerance || 'Not set';
+                investmentHorizon.textContent = preferences.investment_horizon || 'Not set';
+            })
+            .catch(error => console.error('Error fetching preferences:', error));
+
+            // Handle form submission
+            document.getElementById('preferences-form').addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                const sectors = Array.from(document.getElementById('sectors').selectedOptions).map(option => option.value);
+                const riskTolerance = document.getElementById('risk_tolerance').value;
+                const investmentHorizon = document.getElementById('investment_horizon').value;
+
+                fetch('/db/preferences', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        sectors: sectors,
+                        risk_tolerance: riskTolerance,
+                        investment_horizon: investmentHorizon
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        alert('Preferences updated successfully');
+                        fetch('/db/preferences', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const { preferences, sectors } = data;
+                const sectorsSelect = document.getElementById('sectors');
+                const currentSectors = document.getElementById('current-sectors');
+                const riskTolerance = document.getElementById('current-risk-tolerance');
+                const investmentHorizon = document.getElementById('current-investment-horizon');
+
+                // Populate the sectors select box with current preferences
+                sectors.forEach(sector => {
+                    const option = document.createElement('option');
+                    option.value = sector;
+                    option.textContent = sector;
+                    if (preferences.sectors && preferences.sectors.includes(sector)) {
+                        option.selected = true;
+                    }
+                    sectorsSelect.appendChild(option);
+                });
+
+                // Display current preferences
+                if(preferences.sectors)
+                {
+                    currentSectors.textContent = preferences.sectors.join(', ');
+                }
+                else{
+                    currentSectors.textContent = 'Not set';
+                }
+                riskTolerance.textContent = preferences.risk_tolerance || 'Not set';
+                investmentHorizon.textContent = preferences.investment_horizon || 'Not set';
+            })
+            .catch(error => console.error('Error fetching preferences:', error));
+                        // Optionally, you could refetch the preferences here to update the display
+                    } else {
+                        alert('Failed to update preferences: ' + data.error);
+                    }
+                })
+                .catch(error => console.error('Error updating preferences:', error));
+            });
+        });
+    </script>
+</body>
+</html>

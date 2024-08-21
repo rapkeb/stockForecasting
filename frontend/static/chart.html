@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Chart</title>
+    <link rel="stylesheet" href="css/chart.css">
+    <!-- Moment.js -->
+<script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/min/moment.min.js"></script>
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<!-- Chart.js Date Adapter -->
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@^1"></script>
+<script src="js/auth.js"></script>
+<script src="js/chart.js"></script>
+<link rel="stylesheet" href="css/menu.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@100..900&family=Ga+Maamli&family=Poiret+One&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="hamburger-container">
+        <div class="hamburger-menu">
+            <div class="hamburger-bar"></div>
+            <div class="hamburger-bar"></div>
+            <div class="hamburger-bar"></div>
+        </div>
+        <nav class="sidebar">
+            <ul>
+                <li><a href="/index">Home</a></li>
+                <li><a href="/preferences">My preferences</a></li>
+                <li><a href="/personal_suggestions">AI suggestions</a></li>
+                <li><a href="/purchases">View Purchases</a></li>
+                <li id="statisticsMenuItem"><a href="/statistics">Statistics Dashboard</a></li>
+                <li><a href="#" id="logoutLink">Logout</a></li>
+            </ul>
+        </nav>
+    </div>
+    <script src="js/menu.js"></script>
+    <h1 id="title"></h1>
+    <div id="fetchButtonContainer">
+        <button id="fetchButton"></button>
+        <div id="tooltip">ask the analysts</div>
+    </div>
+    <h2 id="share" hidden></h2>
+    <div id="controls">
+        <label for="dataType">Select Data Type:</label>
+        <select id="dataType">
+            <option value="Close">Close Value</option>
+            <option value="Open">Open Value</option>
+            <option value="High">High Value</option>
+            <option value="Low">Low Value</option>
+        </select>
+        <label for="timeRange">Select Time Range:</label>
+        <select id="timeRange">
+            <option value="5y">Past 5 Years</option>
+            <option value="1y">Past Year</option>
+            <option value="1m">Past Month</option>
+            <option value="5d">Past 5 Days</option>
+        </select>
+    </div>
+    <div id="chartsContainer">
+        <div class="chart-wrapper">
+            <canvas id="companyChart"></canvas>
+        </div>
+    </div>
+    <div class="sectionsContainer">
+        <div id="buySection">
+            <h2>Buy Shares</h3>
+            <br>
+            <p>Current Price: <span id="currentPrice">$0.00</span></p>
+            <br>
+            <label for="shareQuantity">Number of Shares:</label>
+            <input type="number" id="shareQuantity" min="1" value="1">
+            <br>
+            <button id="buyButton">Buy Shares</button>
+        </div>
+        <div id="interestCalculator">
+            <h2>Compound Interest Calculator</h3>
+            <label for="principal">Principal ($):</label>
+            <input type="number" id="principal" min="0" value="0">
+            <label for="monthlyAddition">Monthly Addition ($):</label>
+            <input type="number" id="monthlyAddition" min="0" value="0">
+            <label for="rate">Annual Interest Rate (%):</label>
+            <input type="number" id="rate" step="0.01" min="0" value="0" readonly>
+            <label for="time">Time (Years):</label>
+            <input type="number" id="time" min="0" value="0">
+            <button id="calculateButton">Calculate</button>
+            <p>Future Value: <span id="futureValue">$0.00</span></p>
+        </div>
+        <div class="chart-wrapper1">
+            <h2 style="text-align: center;">Latest Analyst Recommendations</h2>
+            <canvas id="recommendationChart"></canvas>
+        </div>
+    </div>
+    <div id="pred">
+    <h1 id="mainHeading">Stock Prediction</h1>
+
+    <div class="date-container">
+        <label for="selectedDate">Select a date:</label>
+        <input type="date" id="selectedDate" name="selectedDate">
+    </div>
+
+    <button id="predict_button">Predict</button>
+
+    <h2 id="subHeading">Prediction Result:</h2>
+    <p id="result"></p>
+    </div>
+</body>
+</html>

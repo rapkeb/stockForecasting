@@ -1,0 +1,39 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, #4368ff, #3a3a3a);
+}
+
+.container {
+    width: 80%;
+    margin: auto;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.filters {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.filters label, .filters input, .filters button {
+    margin-right: 10px;
+}
+
+.graph {
+    margin-bottom: 20px;
+    height: 400px;
+}
+
+canvas {
+    width: 100%;
+    max-height: 400px;
+    margin: 20px auto;
+}

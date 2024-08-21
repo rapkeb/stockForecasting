@@ -1,0 +1,6 @@
+.idea/
+.DS_Store
+venv/
+barak_env/
+__pycache__/
+.env

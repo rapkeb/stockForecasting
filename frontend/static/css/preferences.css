@@ -1,0 +1,93 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+    font-size: 20px;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(135deg, #21368d, #308edc);
+    overflow: hidden;
+}
+
+.preferences-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 90%;
+    max-width: 800px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.5);
+    padding: 20px;
+}
+
+.preferences-box, .current-preferences-box {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 40px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    text-align: center;
+    width: 100%;
+    color: #fff;
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
+}
+
+.preferences-box h2, .current-preferences-box h2 {
+    margin-bottom: 20px;
+    color: #fff;
+}
+
+.input-box {
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.input-box select,
+.input-box input {
+    width: 100%;
+    padding: 10px 0;
+    font-size: 16px;
+    color: #fff;
+    margin-bottom: 30px;
+    border: none;
+    border-bottom: 1px solid #fff;
+    background: transparent;
+    outline: none;
+    appearance: none;
+}
+
+.input-box label {
+    position: absolute;
+    top: -20px;
+    left: 0;
+    font-size: 12px;
+    color: #002d6d;
+    pointer-events: none;
+    transition: 0.5s;
+}
+
+button {
+    background: #002d6d;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    color: #fff;
+    font-size: 18px;
+    transition: background 0.3s ease, transform 0.3s ease;
+}
+
+button:hover {
+    background: #001f4f;
+    transform: scale(1.05);
+}
+
+#pu{
+    font-size: 40px;
+}
